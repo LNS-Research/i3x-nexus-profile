@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>i3X Nexus Profile</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap">
+<style>
+/* Layout: one reading column with a sticky contents rail on wide screens; tables and diagrams scroll inside their own boxes. */
+:root {
+  --bg: #f6f7f8; --surface: #ffffff; --fg: #1b2228; --muted: #5a6670; --rule: #d7dde2;
+  --accent: #1f6f78; --accent-soft: #e2f0f1; --ok: #2e7d4f; --warn: #9a6400; --stop: #a63a2b; --code-bg: #eef1f3;
+  --f-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --f-body: "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12171b; --surface: #1a2126; --fg: #e3e8ec; --muted: #9aa7b1; --rule: #2e3940;
+  --accent: #5fb7bf; --accent-soft: #1d3336; --ok: #6cc290; --warn: #e0a84a; --stop: #e48071; --code-bg: #222b31;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #12171b; --surface: #1a2126; --fg: #e3e8ec; --muted: #9aa7b1; --rule: #2e3940;
+  --accent: #5fb7bf; --accent-soft: #1d3336; --ok: #6cc290; --warn: #e0a84a; --stop: #e48071; --code-bg: #222b31;
+  color-scheme: dark; }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 16px; line-height: 1.6; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 40px 96px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; }
+@media (max-width: 860px) { .wrap { grid-template-columns: minmax(0, 1fr); gap: 24px; } nav.toc { position: static !important; } }
+nav.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; font-size: 13.5px; }
+nav.toc .lbl { text-transform: uppercase; letter-spacing: .08em; font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+nav.toc a { color: var(--muted); text-decoration: none; }
+nav.toc a:hover, nav.toc a:focus-visible { color: var(--accent); }
+main { min-width: 0; max-width: 760px; }
+header.doc { border-bottom: 1px solid var(--rule); padding-bottom: 24px; margin-bottom: 8px; }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .06em; color: var(--accent); text-transform: uppercase; }
+h1 { font-family: var(--f-display); font-weight: 600; font-size: clamp(32px, 5vw, 44px); line-height: 1.12; margin: 8px 0 12px; text-wrap: balance; }
+h2 { font-family: var(--f-display); font-weight: 600; font-size: 27px; line-height: 1.2; margin: 56px 0 12px; text-wrap: balance; scroll-margin-top: 24px; }
+h2 .n { font-family: var(--f-mono); font-size: 15px; color: var(--accent); font-weight: 500; margin-right: 10px; vertical-align: 3px; }
+h3 { font-size: 17px; font-weight: 600; margin: 32px 0 6px; }
+p, li { max-width: 68ch; }
+.lede { font-size: 18px; }
+.meta { font-size: 13.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 18px; }
+code, .mono { font-family: var(--f-mono); font-size: .88em; background: var(--code-bg); padding: 1px 5px; border-radius: 3px; }
+a { color: var(--accent); }
+.box { overflow-x: auto; margin: 16px 0; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--rule); }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 500; background: var(--code-bg); }
+tr:last-child td { border-bottom: 0; }
+td.k { font-family: var(--f-mono); font-size: 13px; white-space: nowrap; }
+.pill { display: inline-block; font-family: var(--f-mono); font-size: 11.5px; padding: 1px 7px; border-radius: 10px; border: 1px solid currentColor; white-space: nowrap; }
+.pill.ok { color: var(--ok); } .pill.warn { color: var(--warn); } .pill.stop { color: var(--stop); } .pill.acc { color: var(--accent); }
+.callout { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 14px 18px; margin: 20px 0; border-radius: 0 6px 6px 0; }
+.callout p { margin: 0; } .callout p + p { margin-top: 8px; }
+pre.mermaid { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 16px; overflow-x: auto; font-size: 13px; }
+pre.code { background: var(--code-bg); border-radius: 6px; padding: 14px 16px; overflow-x: auto; font-family: var(--f-mono); font-size: 13px; line-height: 1.5; }
+.req { font-family: var(--f-mono); font-size: 12px; color: var(--accent); margin-right: 6px; }
+ul.reqs { list-style: none; padding-left: 0; }
+ul.reqs li { padding-left: 0; margin: 6px 0; }
+.level { border-top: 1px solid var(--rule); padding-top: 16px; margin-top: 24px; }
+.level h3 { margin-top: 0; }
+.level dl { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 6px 14px; margin: 8px 0 0; font-size: 14.5px; }
+.level dt { font-size: 11.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); padding-top: 3px; }
+.level dd { margin: 0; } .level dd ul { margin: 0; padding-left: 18px; }
+@media (max-width: 520px) { .level dl { grid-template-columns: minmax(0, 1fr); gap: 2px; } .level dt { padding-top: 8px; } }
+ul.tight li, ol.tight li { margin: 3px 0; }
+footer { margin-top: 64px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 16px; }
+@page { size: Letter; margin: 18mm 16mm; }
+@media print {
+  :root { --bg: #ffffff; }
+  body { background: #fff; font-size: 11pt; }
+  .wrap { display: block; max-width: none; padding: 0; }
+  nav.toc { display: none; }
+  main { max-width: none; }
+  h2 { break-after: avoid; margin-top: 28pt; }
+  h3 { break-after: avoid; }
+  .box, pre, .callout, .level, tr, pre.mermaid { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+</style>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <div class="lbl">Contents</div>
+  <ol>
+    <li><a href="#abstract">Abstract</a></li>
+    <li><a href="#conventions">Conventions and terms</a></li>
+    <li><a href="#scope">Scope</a></li>
+    <li><a href="#arch">Reference architecture</a></li>
+    <li><a href="#classes">Data classes</a></li>
+    <li><a href="#media">Media</a></li>
+    <li><a href="#writes">Write governance</a></li>
+    <li><a href="#load">Load and priority</a></li>
+    <li><a href="#ha">Availability</a></li>
+    <li><a href="#security">Security</a></li>
+    <li><a href="#conformance">Conformance</a></li>
+    <li><a href="#params">Parameters</a></li>
+    <li><a href="#annex">Annexes</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="doc">
+  <div class="eyebrow">Specification · draft 0.4 · for review</div>
+  <h1>i3X Nexus Profile</h1>
+  <div class="meta"><span>A profile of CESMII i3X 1.0</span><span>Status: draft for comment</span></div>
+</header>
+
+<section id="abstract">
+<h2><span class="n">1</span>Abstract</h2>
+<p class="lede">This profile defines an <strong>i3X nexus</strong>: one i3X 1.0 endpoint per site that serves live values, history, business records and media (video, images, audio) in a single address space. Writes are governed: each one is authorised, recorded, reversible and checked afterwards. The nexus is redundant, so it keeps working through the loss of a node or of the site's uplink.</p>
+<p>OPC UA, i3X and MCP already define how data moves and how models reach tools. No existing standard defines who may write, under what authority, with what record of why, how a write is undone, or how anyone checks afterwards that it did what it claimed. Software agents now act on plant data, and that makes the gap urgent. This profile fills it while staying inside the i3X 1.0 contract. A client that knows nothing about the profile keeps working.</p>
+<p>The profile is product-neutral. It is meant to let an operations or decision platform that holds authority limits, a historian, an MES or CMMS, a camera system and AI agents interoperate through one contract. Any system can implement it, as a server or as a client.</p>
+<div class="callout">
+  <p><strong>Core mechanism.</strong> A nexus never writes to a plant system directly on a client's behalf. Every governed write is a <em>WriteRequest</em> object. It carries its actor, its authority and its justification, and moves through <code>requested → approved → applied → verified</code>, or ends <code>rejected</code>, <code>expired</code> or <code>rolled_back</code>. Clients read it and subscribe to it over plain i3X 1.0.</p>
+</div>
+</section>
+
+<section id="conventions">
+<h2><span class="n">2</span>Conventions and terms</h2>
+<p>The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are to be read as described in RFC 2119 and RFC 8174 when they appear in capitals. Requirements are numbered <span class="req">NX-n</span> for reference.</p>
+<div class="box"><table>
+<thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td><strong>Nexus</strong></td><td>An i3X 1.0 server that conforms to this profile.</td></tr>
+<tr><td><strong>Site nexus</strong></td><td>A nexus authoritative for one site or one area of a site. It runs at the site.</td></tr>
+<tr><td><strong>Enterprise nexus</strong></td><td>An optional nexus that aggregates site nexuses for consumers off site. It is never authoritative for a site's writes.</td></tr>
+<tr><td><strong>Principal</strong></td><td>An authenticated person, agent or service.</td></tr>
+<tr><td><strong>Owned namespace</strong></td><td>An i3X namespace URI that a principal is registered as the publisher of.</td></tr>
+<tr><td><strong>Authority limit</strong></td><td>A rule for one site and exception type: the owner role, the delegated limit, the materiality threshold and any boundary triggers.</td></tr>
+<tr><td><strong>System of record</strong></td><td>The system that holds the truth for a value or record: a device, a historian, an MES, a CMMS, an ERP.</td></tr>
+<tr><td><strong><code>{nx}</code></strong></td><td>The profile's namespace URI, to be assigned on adoption. Examples use <code>urn:i3x-nexus:1.0</code>.</td></tr>
+</tbody></table></div>
+<h3>Normative references</h3>
+<ul class="tight">
+<li>CESMII i3X 1.0 specification and conformance suite</li>
+<li>IEC 62541 (OPC UA), Parts 4 (Services, including Write and Redundancy) and 11 (Historical Access)</li>
+<li>IEC 62443-3-3, 62443-4-1 and 62443-4-2</li>
+<li>ISA-95 / IEC 62264 (equipment hierarchy)</li>
+<li>Eclipse Sparkplug 3.0</li>
+<li>RFC 2119, RFC 8174, RFC 3339, RFC 9110</li>
+</ul>
+</section>
+
+<section id="scope">
+<h2><span class="n">3</span>Scope</h2>
+<h3>In scope</h3>
+<ul class="tight">
+<li>One address space per site covering four data classes: realtime, historical, transactional and media.</li>
+<li>Governed writes, at three tiers.</li>
+<li>Provenance, rollback and outcome verification for every governed write.</li>
+<li>Priority, load shedding and scaling behaviour.</li>
+<li>Redundancy targets and failure behaviour.</li>
+<li>A security posture aligned to IEC 62443.</li>
+<li>Conformance levels.</li>
+</ul>
+<h3>Out of scope</h3>
+<ul class="tight">
+<li>Control. A nexus MUST NOT run a control loop, hold an interlock or form part of a safety function. Setpoint writes, where allowed, pass through the site's existing control layer.</li>
+<li>Replacing historians, MES, CMMS or ERP. A nexus serves them through adapters and holds only data it owns or data with no other home.</li>
+<li>New protocols. i3X is the northbound contract. OPC UA and MQTT are the expected southbound sources. Device protocols such as Modbus or EtherNet/IP are reached through an existing gateway.</li>
+<li>Model inference. Agents may propose writes. The path that decides, applies and verifies a write is deterministic and contains no model call.</li>
+</ul>
+</section>
+
+<section id="arch">
+<h2><span class="n">4</span>Reference architecture</h2>
+<p>A site nexus sits in the site DMZ, between the plant network and the enterprise network (ISA-95 Level 3.5). An enterprise nexus is optional and lives off site. Both serve the same i3X surface.</p>
+<pre class="mermaid">
+flowchart LR
+  subgraph OT["Plant network (L0–L2)"]
+    PLC["Devices"] --> GW["Gateway / OPC UA server"]
+    BROKER["MQTT broker"]
+    CAM["Cameras · microphones"]
+  end
+  subgraph L3["Site systems (L3)"]
+    HIST["Historian"]
+    MES["MES / CMMS"]
+  end
+  subgraph DMZ["Site nexus (L3.5) · two nodes + witness"]
+    DRV["Source drivers"] --> LVC["Last-value cache<br/>+ event log"]
+    LVC --> API["i3X 1.0 API<br/>+ x-nexus"]
+    FED["History federation"] --> API
+    TX[("Records · ledger<br/>· subscriptions")] --> API
+    GOV["Write governor"] --> TX
+    API --> GOV
+    MS[("Media store")] --> API
+    MG["Media gateway"]
+    SNF["Store-and-forward"]
+  end
+  GW -- "OPC UA" --> DRV
+  BROKER -- "MQTT" --> DRV
+  CAM -- "RTSP / ONVIF" --> MG
+  HIST -- "adapter" --> FED
+  MES -- "adapter" --> TX
+  GOV -- "approved W2 only" --> GW
+  subgraph OFF["Enterprise nexus (optional)"]
+    AGG["Aggregated i3X"]
+  end
+  SNF -- "outbound only" --> AGG
+  CLIENTS["i3X clients<br/>people · agents · systems"] --> API
+  CLIENTS -. "media bytes, live video" .-> MG
+</pre>
+<div class="box"><table>
+<thead><tr><th>Component</th><th>Function</th></tr></thead>
+<tbody>
+<tr><td>Source drivers</td><td>Subscribe to OPC UA monitored items and MQTT topics; normalise to value, quality and timestamp (VQT), keeping the source timestamp.</td></tr>
+<tr><td>Last-value cache</td><td>Holds the current VQT per element, with an event log so a restarted node rebuilds without re-reading every source.</td></tr>
+<tr><td>History federation</td><td>Routes history queries to the system of record's historian, or to the nexus's own store for series it owns.</td></tr>
+<tr><td>Record store</td><td>Holds owned records, WriteRequests, the provenance ledger and subscription state.</td></tr>
+<tr><td>Write governor</td><td>Owns every governed write: checks, approvals, application, verification, compensation.</td></tr>
+<tr><td>Media store and gateway</td><td>Content-addressed storage for images, clips and audio; ingest and re-serving of live streams.</td></tr>
+<tr><td>Store-and-forward</td><td>Queues traffic for the enterprise tier while the uplink is down, and replays it in priority order.</td></tr>
+</tbody></table></div>
+<p>The components are logical. An implementation MAY combine or split them, provided the requirements below hold.</p>
+</section>
+
+<section id="classes">
+<h2><span class="n">5</span>Data classes</h2>
+<p>All four classes are served as ordinary i3X objects in one hierarchy. They differ in where the truth lives and in how each i3X operation is answered.</p>
+<div class="box"><table>
+<thead><tr><th></th><th>Realtime</th><th>Historical</th><th>Transactional</th><th>Media</th></tr></thead>
+<tbody>
+<tr><td><strong>Examples</strong></td><td>Tag values, equipment state, alarms</td><td>Time series; batch and event history</td><td>Work orders, quality holds, decision records, outcome observations, authority limits, outbound signals</td><td>Images, clips, audio, live streams</td></tr>
+<tr><td><strong>System of record</strong></td><td>The device</td><td>The historian, or the nexus for owned series</td><td>MES/CMMS/ERP, or the nexus for owned records</td><td>The media store</td></tr>
+<tr><td><strong><code>/objects/value</code></strong></td><td>From the cache, with staleness quality</td><td>Latest point</td><td>Current version</td><td>The reference (§6)</td></tr>
+<tr><td><strong><code>/objects/history</code></strong></td><td>Event-log window; longer ranges via the historical path</td><td>Routed to the store; bounded</td><td>Every version, append-only</td><td>Time-ordered references</td></tr>
+<tr><td><strong>Write</strong></td><td>Tier W2 only</td><td>Owned series only</td><td>Tier W0 or W1</td><td>Through the media intake</td></tr>
+</tbody></table></div>
+<ul class="reqs">
+<li><span class="req">NX-1</span>A nexus MUST keep the source timestamp of a value unchanged. It SHOULD expose its own receive time in metadata.</li>
+<li><span class="req">NX-2</span>Quality MUST follow the OPC UA Good / Uncertain / Bad classes. A realtime value bound to a source with a declared update period, and not refreshed within three times that period, MUST read Uncertain, with its last value kept. Report-by-exception sources (OPC UA subscriptions, Sparkplug, most MQTT publishers) are silent when steady, so they declare no period and staleness does not apply to them. A value whose source is lost MUST read Bad, and SHOULD be served without a value, so it cannot be mistaken for a reading.</li>
+<li><span class="req">NX-3</span>A nexus MUST NOT substitute any value for one it cannot obtain: no default, no demo data, no interpolation. A failed source shows only as degraded quality or a per-item error.</li>
+<li><span class="req">NX-4</span>A failed history store MUST return an error for the request. It MUST NOT return an empty series, which a client would read as "no data".</li>
+<li><span class="req">NX-5</span>Every change to a transactional record MUST create a new version with its writer, time and an idempotency key. Versions MUST NOT be updated or deleted. The record's history is its version list.</li>
+<li><span class="req">NX-6</span>A record held by an external system of record MUST be served as a projection carrying that system's version, and MUST NOT be changed through the nexus except as a W1 write (§7).</li>
+</ul>
+</section>
+
+<section id="media">
+<h2><span class="n">6</span>Media: video, images and audio</h2>
+<p>i3X values are JSON and its subscriptions are text streams. Media therefore follows one rule: <strong>references travel in i3X, and bytes travel out of band.</strong></p>
+<div class="box"><table>
+<thead><tr><th>Object type</th><th>In i3X</th><th>Bytes</th></tr></thead>
+<tbody>
+<tr><td class="k">MediaItem</td><td>An image, clip or audio sample. Its value carries <code>sha256</code>, <code>mimeType</code>, <code>size</code>, <code>status</code>, <code>capturedAt</code>, optional <code>durationMs</code>/<code>width</code>/<code>height</code>, and <code>href</code>, a short-lived signed URL. Related by <code>CapturedBy</code> to its device and by <code>Documents</code> to the alarm, reading or record it documents.</td><td>Media store, through <code>href</code></td></tr>
+<tr><td class="k">MediaStream</td><td>A live camera or microphone feed. Its value carries codec, resolution and a viewer URL. Stream health (online, frame rate, dropped frames) is ordinary realtime values with quality.</td><td>Media gateway (WebRTC, HLS). Never through the i3X API</td></tr>
+<tr><td class="k">MediaIntake</td><td>The writable element through which new media is announced.</td><td>None</td></tr>
+</tbody></table></div>
+<ul class="reqs">
+<li><span class="req">NX-10</span>A MediaItem's element id MUST be derived from its content hash: <code>{nx-prefix}:media:&lt;sha256&gt;</code>. A repeated request therefore names the same item, and a citation proves which bytes it cites.</li>
+<li><span class="req">NX-11</span>Upload: a client writes <code>{ sha256, mimeType, size, … }</code> to the MediaIntake with <code>PUT /objects/value</code>. The item appears with status <code>awaiting_bytes</code> and an upload <code>href</code>. Bytes sent to that URL MUST be hashed on arrival. A mismatch, or more bytes than declared, MUST be discarded, and the item stays <code>awaiting_bytes</code>. On a match the item becomes <code>available</code>.</li>
+<li><span class="req">NX-12</span>Signed URLs MUST expire, by default after at most 10 minutes. They SHOULD be stable within a short window, so that reading an item twice does not register as a change to subscribers.</li>
+<li><span class="req">NX-13</span>Accepted media types MUST be an explicit allow-list. Executable and archive types MUST be refused.</li>
+<li><span class="req">NX-14</span>Media cited by a WriteRequest, ledger entry or outcome observation MUST be retained as long as the ledger is.</li>
+<li><span class="req">NX-15</span>Live streams and media byte transfer MUST run outside the capacity that serves i3X values, with a bandwidth cap per conduit (§8).</li>
+<li><span class="req">NX-16</span>A media gateway MUST pull devices; nothing may publish into it. Every viewer MUST be authorised by the nexus, by a short-lived signed token carried in the stream's viewer URL and valid for that stream only.</li>
+<li><span class="req">NX-17</span>Where a clip is cut around an event, it MUST be stored as a MediaItem that <code>Documents</code> the event and was <code>CapturedBy</code> the stream, and its window MUST be limited to what was actually recorded.</li>
+</ul>
+</section>
+
+<section id="writes">
+<h2><span class="n">7</span>Write governance</h2>
+<h3>7.1 Tiers</h3>
+<div class="box"><table>
+<thead><tr><th>Tier</th><th>Meaning</th><th>Example</th><th>Gate</th></tr></thead>
+<tbody>
+<tr><td class="k">W0 publish</td><td>Writing into a namespace the principal owns</td><td>A decision record, an outcome observation, an outbound signal</td><td>Namespace ownership</td></tr>
+<tr><td class="k">W1 record</td><td>Creating or changing a record in a system of record</td><td>Open a work order, place a quality hold</td><td>Authority limit; approval above the delegated limit or on a boundary trigger</td></tr>
+<tr><td class="k">W2 setpoint</td><td>Changing a value the process acts on</td><td>A temperature setpoint, a line speed</td><td>Declared write envelope, approval by a named person every time, read-back verification</td></tr>
+</tbody></table></div>
+<ul class="reqs">
+<li><span class="req">NX-20</span>Ownership for W0 MUST be tested against the namespace the <em>server</em> holds for the target's type, by exact match. A prefix match is not allowed, and the test MUST fail closed when the namespace is absent.</li>
+<li><span class="req">NX-21</span>Agents MAY hold W0 rights in their own namespaces. For W1 and W2 an agent MAY only request. An agent MUST NOT approve a write.</li>
+<li><span class="req">NX-22</span>A direct write to a governed target, for example <code>PUT /objects/value</code> on a setpoint, MUST be refused per item with status 403 and a message naming the intake element to use.</li>
+</ul>
+
+<h3>7.2 The WriteRequest object</h3>
+<p>Every W1 and W2 write is a <code>WriteRequest</code> object in <code>{nx}</code>. Its schema is in Annex A. It carries the target, the proposed value, the prior value and version, the actor and the role it acts for, a justification (a reference to a decision record and its falsification condition), the governing authority limit, reversibility, the compensation, an idempotency key, status, approvals, the application result and the verification result.</p>
+<ul class="reqs">
+<li><span class="req">NX-23</span>The governor MUST compute <code>status</code> and <code>escalation</code> itself and MUST ignore any values the writer supplies for them.</li>
+</ul>
+
+<h3>7.3 Lifecycle within i3X 1.0</h3>
+<p>i3X 1.0 has no create verb. A nexus therefore exposes one writable <strong>intake element</strong> per tier. A <code>PUT /objects/value</code> to the intake is an ordinary i3X write, and the governor turns it into a new WriteRequest.</p>
+<pre class="mermaid">
+sequenceDiagram
+  participant R as Requester (person or agent)
+  participant N as Write governor
+  participant A as Approver
+  participant S as System of record / gateway
+  participant V as Verifier
+  R->>N: PUT intake (request + idempotency key)
+  N->>N: authenticate · ownership · tier · authority limit · envelope
+  N-->>R: success; WriteRequest id (status requested)
+  N->>A: approval needed (subscription event)
+  A->>N: PUT WriteRequest.approvals (within own limit)
+  N->>N: re-read target; compare to prior (stale → rejected)
+  N->>S: apply
+  S-->>N: acknowledgement
+  N->>S: read back
+  N->>N: applied → verified, or mismatch → compensate
+  V->>N: after deadline: outcome observation (W0)
+</pre>
+<ul class="reqs">
+<li><span class="req">NX-24</span>The WriteRequest id MUST be derived from the requesting principal and the idempotency key, so a retried PUT finds the existing request and creates no second one. Recommended derivation: <code>{nx-prefix}:wr:</code> followed by the first 24 hex characters of SHA-256(principal id, newline, idempotency key).</li>
+<li><span class="req">NX-26</span>Because an i3X 1.0 write result carries no payload, a nexus SHOULD return the element ids it created or wrote, in request order, in a response header <code>X-Nexus-Written</code> (a JSON array, null for a failed item). A client that ignores it loses nothing.</li>
+<li><span class="req">NX-25</span>The same intake pattern SHOULD be used to create any new record over i3X 1.0.</li>
+</ul>
+
+<h3>7.4 Checks before applying</h3>
+<ol class="tight">
+<li><strong>Identity.</strong> The principal is authenticated. Any role it acts for is one it is delegated to hold.</li>
+<li><strong>Ownership</strong> (W0), as NX-20.</li>
+<li><strong>Authority</strong> (W1/W2). The authority limit for the site and exception type is found. With no limit, the request reads <code>no_decision_right</code> and cannot be approved.</li>
+<li><strong>Envelope</strong> (W2). The proposed value lies inside the target's declared range, rate of change and allowed states. A value outside is rejected, never clamped.</li>
+<li><strong>Freshness.</strong> At apply time the target still holds the recorded prior value. If it does not, the request is rejected as stale. The apply itself SHOULD be conditional on the recorded version (for example HTTP If-Match), so a change that lands between the check and the write is also refused.</li>
+<li><strong>Approval.</strong> W1 needs one approval at or below the delegated limit, and approval by the limit's owner role above it or on any boundary trigger. W2 always needs a named person. Requester and approver MUST be different principals.</li>
+</ol>
+<ul class="reqs"><li><span class="req">NX-27</span>A refusal by the system of record (a 4xx, or a conditional write refused as stale) rejects the request. A failure of the system of record (a 5xx, a timeout, no answer) MUST NOT: the approval stands, the request stays <code>approved</code>, and the governor retries. A governor that takes over MUST finish requests left <code>approved</code> or <code>applied</code> by its predecessor, re-reading the system of record first so that an apply that already happened is recorded, not repeated.</li></ul>
+<p class="mono" style="background:none;padding:0">Escalation rule: <strong>escalates</strong> if exposure ≥ materiality threshold or any boundary trigger is present; <strong>no_decision_right</strong> if no limit exists; <strong>exposure_unknown</strong> if a limit exists but no exposure is stated; otherwise <strong>stays_local</strong>. The delegated limit decides who approves. It is not the escalation test.</p>
+
+<h3>7.5 Provenance</h3>
+<ul class="reqs">
+<li><span class="req">NX-30</span>Every WriteRequest state change MUST append one ledger entry: request id, transition, principal, time, prior and new state, and the hash of the previous entry.</li>
+<li><span class="req">NX-31</span>Ledger entries MUST NOT be updated or deleted. Verifying the chain MUST detect an edited, removed or reordered entry.</li>
+<li><span class="req">NX-32</span>The ledger MUST be readable as the WriteRequest's i3X history, so an auditor needs no other interface.</li>
+</ul>
+
+<h3>7.6 Rollback</h3>
+<ul class="reqs">
+<li><span class="req">NX-33</span>Rollback MUST be a new, linked WriteRequest (relationship <code>Compensates</code>) that applies the recorded compensation under the same checks. Erasing the original is not rollback.</li>
+<li><span class="req">NX-34</span>If read-back does not match within the verification window, the governor MUST apply the compensation without further approval, because the approved state never existed. It MAY do the same on an envelope breach after apply, where the envelope permits auto-revert.</li>
+<li><span class="req">NX-35</span>A request marked <code>reversible: false</code> MUST state that no compensation exists, and MUST be approved one level above the limit's owner role.</li>
+</ul>
+
+<h3>7.7 Verification</h3>
+<ul class="reqs">
+<li><span class="req">NX-36</span><strong>Immediate.</strong> After applying, the governor MUST read the target back and record the result. That proves the write landed and nothing more.</li>
+<li><span class="req">NX-37</span><strong>Outcome.</strong> When the justifying decision carries a structured falsification condition, a verifier evaluates it after its deadline against the system of record. It publishes the result as an outcome observation (a W0 write) related to the WriteRequest. The nexus stores the condition and the observation. It does not judge whether the decision was right.</li>
+</ul>
+</section>
+
+<section id="load">
+<h2><span class="n">8</span>Load handling, scaling and priority</h2>
+<h3>8.1 Priority classes</h3>
+<div class="box"><table>
+<thead><tr><th>Class</th><th>Contents</th><th>Under load</th></tr></thead>
+<tbody>
+<tr><td class="k">P0 critical</td><td>Alarm and quality-change events; approvals; rollbacks; WriteRequest status changes; W2 read-back; failover traffic; <code>GET /info</code></td><td><span class="pill ok">never shed</span> reserved capacity</td></tr>
+<tr><td class="k">P1 operations</td><td>Realtime reads, subscriptions, streams</td><td><span class="pill warn">conflated</span> latest value kept</td></tr>
+<tr><td class="k">P2 business</td><td>Transactional reads; W0/W1 requests</td><td><span class="pill warn">queued</span> then 429</td></tr>
+<tr><td class="k">P3 bulk</td><td>History ranges, backfill, analytics, media bytes, enterprise replay</td><td><span class="pill stop">shed first</span> 503</td></tr>
+</tbody></table></div>
+<ul class="reqs">
+<li><span class="req">NX-40</span>The server MUST assign the class from the object type and operation. A caller MUST NOT be able to raise its own class. A caller MAY ask for a lower one.</li>
+<li><span class="req">NX-41</span>Each class MUST have its own queue and concurrency budget, so no class waits behind another's work. P0 MUST have reserved capacity that other classes cannot borrow (default 20%), and MUST NOT be shed for load.</li>
+<li><span class="req">NX-42</span>Under rising load, the nexus MUST shed P3 first, then P2, then conflate P1. Every refused request MUST receive 429 or 503 with <code>Retry-After</code>. Nothing is dropped silently, and no write is left half-applied.</li>
+<li><span class="req">NX-43</span>In a subscription stream, P0 events MUST bypass conflation, MUST NOT be dropped, and MUST be written before other updates in the same flush. A client that falls past its P0 queue cap MUST be disconnected so it resynchronises, rather than missing events.</li>
+<li><span class="req">NX-44</span>Southbound, P0 items SHOULD use their own OPC UA subscription with a short publishing interval, and MQTT QoS 1 or higher. On conduits the site controls, P0 traffic SHOULD be marked DSCP EF.</li>
+<li><span class="req">NX-45</span>After an uplink outage, store-and-forward MUST replay P0 first, then P2, then the latest P1 values, then P3.</li>
+<li><span class="req">NX-46</span>Per-principal rate limits MUST apply. History queries MUST be bounded by range and point count.</li>
+</ul>
+<h3>8.2 Adding capacity versus adding a nexus</h3>
+<p>A nexus is a unit of authority. One governor and one ledger serialise every governed write in its scope.</p>
+<div class="box"><table>
+<thead><tr><th>Pressure</th><th>Response</th><th>Automatic</th></tr></thead>
+<tbody>
+<tr><td>More readers or subscribers</td><td>Add read replicas that follow the event log and serve reads and streams</td><td><span class="pill ok">MAY</span></td></tr>
+<tr><td>Heavy history queries</td><td>Add history workers; push aggregation to the historian</td><td><span class="pill ok">MAY</span></td></tr>
+<tr><td>Source change rate beyond one node</td><td>Spread drivers across nodes; one cache and log</td><td><span class="pill warn">operator</span></td></tr>
+<tr><td>A site too large for one nexus</td><td>Shard by ISA-95 area. Each shard is a full nexus that owns its area and its authority limits</td><td><span class="pill stop">MUST NOT</span></td></tr>
+<tr><td>A new site, or an area that must survive the rest failing</td><td>A new nexus, federated into the enterprise tier</td><td><span class="pill stop">MUST NOT</span></td></tr>
+</tbody></table></div>
+<ul class="reqs">
+<li><span class="req">NX-47</span>Creating a nexus or a shard changes an authority boundary. It MUST be a reviewed configuration change and MUST NOT happen automatically.</li>
+<li><span class="req">NX-48</span>A nexus MAY mount another's namespaces as an upstream, keeping element ids. A write to a mounted element MUST be forwarded to the nexus that owns it, with the caller's own credential, and only that nexus's governor decides it.</li>
+<li><span class="req">NX-49</span>A write forwarded between nodes or tiers MUST carry an idempotency key; the forwarding node mints one if the client sent none. A node that dies mid-request leaves an unknown outcome, and the key is what makes re-sending it safe.</li>
+</ul>
+</section>
+
+<section id="ha">
+<h2><span class="n">9</span>Availability and redundancy</h2>
+<ul class="reqs">
+<li><span class="req">NX-50</span>A site nexus MUST keep reading, serving and governing writes for its site with the uplink down. An enterprise nexus MUST NOT be in the path of any site write.</li>
+<li><span class="req">NX-51</span>A redundant site nexus MUST have two full nodes and a quorum witness. The witness holds only consensus state. The pair is active/active for reads and subscriptions, and active/standby for the governor. This is OPC UA's non-transparent redundancy applied to i3X.</li>
+<li><span class="req">NX-52</span>A node that loses quorum MUST fence itself to read-only.</li>
+<li><span class="req">NX-53</span>With the standby down, the nexus MUST report degraded redundancy in <code>/info</code> and MUST suspend W2.</li>
+<li><span class="req">NX-55</span>The shared store under a redundant nexus MUST itself be redundant with automatic failover decided by a quorum of at least three members on separate hosts, and SHOULD replicate synchronously so an acknowledged record is never lost (RPO 0). Only a synchronous standby may be promoted.</li>
+<li><span class="req">NX-56</span>Where the store's members run on different operating systems or C libraries, text indexes MUST use an OS-independent collation (byte-wise <code>C</code>), because a library change in sort order silently corrupts a replicated index.</li>
+<li><span class="req">NX-54</span>Subscription state MUST survive failover. A client reconnecting to the other node MUST be able to resume from its last sequence number.</li>
+</ul>
+<h3>Targets</h3>
+<div class="box"><table>
+<thead><tr><th>Data</th><th>RPO</th><th>RTO</th></tr></thead>
+<tbody>
+<tr><td>Records, WriteRequests, ledger</td><td class="k">0</td><td class="k">≤ 30 s</td></tr>
+<tr><td>Realtime values</td><td class="k">≤ 1 update period</td><td class="k">≤ 15 s</td></tr>
+<tr><td>Subscription state</td><td class="k">0</td><td class="k">≤ 15 s</td></tr>
+<tr><td>Owned history</td><td class="k">0</td><td class="k">≤ 30 s</td></tr>
+<tr><td>Media bytes</td><td class="k">≤ 5 min (references: 0)</td><td class="k">≤ 60 s</td></tr>
+<tr><td>Uplink to enterprise tier</td><td class="k">0, within the buffer window</td><td>on reconnect</td></tr>
+</tbody></table></div>
+<h3>Failure behaviour</h3>
+<div class="box"><table>
+<thead><tr><th>Failure</th><th>Required behaviour</th></tr></thead>
+<tbody>
+<tr><td>Leader node lost</td><td>Standby promotes. In-flight requests resume from the ledger. An apply with no recorded acknowledgement is re-read before anything is re-sent.</td></tr>
+<tr><td>Standby lost</td><td>Service continues; degraded redundancy reported; W2 suspended.</td></tr>
+<tr><td>Link between nodes lost</td><td>The side with quorum leads; the other fences to read-only.</td></tr>
+<tr><td>Uplink lost</td><td>No change at the site; store-and-forward buffers. The enterprise tier shows the site's last values as Uncertain.</td></tr>
+<tr><td>Source lost</td><td>Elements read Bad; an event is raised; nothing is substituted.</td></tr>
+<tr><td>Historian lost</td><td>Per-item errors for federated ranges; the event-log window still answers.</td></tr>
+<tr><td>Approver unavailable</td><td>The request expires (defaults: W1 4 h, W2 15 min). Nothing is applied because time ran out.</td></tr>
+<tr><td>Node clock off by more than 500 ms</td><td>That node suspends writes.</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="security">
+<h2><span class="n">10</span>Security</h2>
+<p>The read path targets IEC 62443-3-3 security level SL 2 and the write governor targets SL 3. Development follows 62443-4-1 and components follow 62443-4-2.</p>
+<h3>Zones and conduits</h3>
+<ul class="reqs">
+<li><span class="req">NX-60</span>A site nexus MUST be its own zone in the site DMZ. Southbound conduits MUST be opened by the nexus, outbound, to the gateway and broker.</li>
+<li><span class="req">NX-61</span>The only path from the nexus into the plant network that writes MUST be the W2 conduit to the gateway: one port, one certificate, disabled unless W2 is enabled.</li>
+<li><span class="req">NX-62</span>The uplink to an enterprise tier MUST be opened outbound from the site. A site nexus MUST NOT accept connections from the internet.</li>
+</ul>
+<div class="box"><table>
+<thead><tr><th>FR</th><th>Requirement</th></tr></thead>
+<tbody>
+<tr><td class="k">FR1 Identification &amp; authentication</td><td>One principal per person, agent and service. A shared credential MUST NOT write. OAuth 2 access tokens from the site's identity provider (verified against its published keys, with an algorithm allow-list that excludes <code>none</code> and HMAC, and checks of issuer, audience and expiry) or client certificates from the site CA. The identity provider establishes who the caller is; roles, scopes and namespace ownership come from the nexus's own registration of that principal, never from token claims. A node forwarding a write vouches for the caller it authenticated with a short-lived assertion signed by the cluster secret.</td></tr>
+<tr><td class="k">FR2 Use control</td><td>Scopes per namespace and tier; authority limits; separate requester and approver.</td></tr>
+<tr><td class="k">FR3 System integrity</td><td>Signed releases with an SBOM; hash-chained ledger; envelope checks.</td></tr>
+<tr><td class="k">FR4 Data confidentiality</td><td>TLS 1.2 or later (1.3 recommended) on every conduit; encryption at rest. Media has its own read scope, because video and audio can capture people. Every media fetch is logged, and site privacy rules govern retention and viewing.</td></tr>
+<tr><td class="k">FR5 Restricted data flow</td><td>The zones and conduits above.</td></tr>
+<tr><td class="k">FR6 Timely response</td><td>Ledger and security events forwarded to the site's SIEM; alerts on degraded redundancy, clock skew and refused writes.</td></tr>
+<tr><td class="k">FR7 Resource availability</td><td>Rate limits, bounded queries, per-subscription queue caps, priority classes, redundancy.</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="conformance">
+<h2><span class="n">11</span>Conformance</h2>
+<p>The profile changes the shape of no part of the i3X 1.0 normative surface. Additions are either ordinary objects in <code>{nx}</code> or declared extensions that a plain client can ignore.</p>
+<div class="box"><table>
+<thead><tr><th>Feature</th><th>Mechanism</th><th>Relation to i3X 1.0</th></tr></thead>
+<tbody>
+<tr><td>Realtime, history, subscriptions, SSE</td><td>Normative endpoints</td><td><span class="pill ok">conformant</span></td></tr>
+<tr><td>Records, WriteRequests, approvals, ledger</td><td>Objects; approvals are field writes; the ledger is history</td><td><span class="pill ok">conformant</span></td></tr>
+<tr><td>Creating a record or request</td><td>PUT to an intake element</td><td><span class="pill ok">conformant</span></td></tr>
+<tr><td>Refusing a direct write to a governed target</td><td>Per-item 403</td><td><span class="pill ok">conformant</span></td></tr>
+<tr><td>Media references and uploads</td><td>Objects and intake</td><td><span class="pill ok">conformant</span></td></tr>
+<tr><td>Capabilities, priority classes, redundancy state, partner endpoints</td><td><code>x-nexus</code> in <code>GET /info</code> (Annex B)</td><td><span class="pill acc">additive extension</span></td></tr>
+<tr><td>Resume a stream from a sequence number</td><td>Optional stream parameter, ignored if absent</td><td><span class="pill acc">additive extension</span></td></tr>
+<tr><td>Media bytes and live streams</td><td>Signed URLs; WebRTC/HLS</td><td><span class="pill acc">out of band</span></td></tr>
+</tbody></table></div>
+<ul class="reqs">
+<li><span class="req">NX-70</span>A nexus at every level MUST achieve CESMII i3X 1.0 <em>Full 1.0 Compliance</em> in three consecutive runs of the conformance suite, against a conformance tenant. Production data MUST NOT be used.</li>
+<li><span class="req">NX-71</span><code>/info</code> MUST declare truthfully which levels and tiers are enabled.</li>
+</ul>
+
+<h3>Levels</h3>
+<p>Each level includes the ones before it. An implementation claims the highest level whose tests it passes.</p>
+
+<div class="level"><h3>Level 1 · Read nexus</h3>
+<dl><dt>Requires</dt><dd>§5, §6, NX-20 (W0), §8.1, single node.</dd>
+<dt>Tests</dt><dd><ul>
+<li>The conformance suite, three runs.</li>
+<li>Load at the declared design point (Section 12) for one hour.</li>
+<li>Three times that load, with a bulk history flood and alarm events injected throughout.</li>
+<li>Faults: a source lost, the historian lost, a malformed value.</li>
+<li>Sign-in: expired, wrong-audience, wrong-issuer, unsigned and tampered tokens; a client certificate from another CA.</li>
+<li>Media: an upload with the wrong hash, an expired URL, a disallowed type.</li></ul></dd>
+<dt>Pass</dt><dd><ul>
+<li>Full 1.0 Compliance.</li>
+<li>p99 source-to-subscriber latency at or under the declared target.</li>
+<li>Zero P0 events lost, with P0 p99 under 100 ms during the flood.</li>
+<li>Every fault shows as degraded quality or a per-item error, and no substituted value appears.</li>
+<li>Every bad upload is refused.</li></ul></dd></dl></div>
+
+<div class="level"><h3>Level 2 · Redundant nexus</h3>
+<dl><dt>Requires</dt><dd>§9, NX-45, NX-48.</dd>
+<dt>Tests</dt><dd><ul>
+<li>20 forced leader failures under load.</li>
+<li>Partition of the link between nodes, in both directions.</li>
+<li>An uplink outage for the full buffer window.</li>
+<li>The conformance suite running during a failover.</li>
+<li>The shared store's primary killed outright, in each direction.</li></ul></dd>
+<dt>Pass</dt><dd><ul>
+<li>RTO targets met on every failure.</li>
+<li>Zero lost or duplicated records, confirmed by reconciliation.</li>
+<li>No split brain.</li>
+<li>The enterprise tier converges with P0 replayed first.</li>
+<li>The suite passes across the failover.</li>
+<li>Writes resume within the RTO after the store's primary is killed, with the ledger's hash chain intact and no idempotency key applied twice.</li></ul></dd></dl></div>
+
+<div class="level"><h3>Level 3 · Governed record writes</h3>
+<dl><dt>Requires</dt><dd>§7 for W0 and W1; principal-per-actor identity.</dd>
+<dt>Tests</dt><dd><ul>
+<li>Property tests: no request reaches <code>applied</code> without every §7.4 check.</li>
+<li>A retried intake write across a failover.</li>
+<li>A stale prior value.</li>
+<li>Self-approval.</li>
+<li>A ledger entry edited by hand.</li>
+<li>A rollback.</li></ul></dd>
+<dt>Pass</dt><dd><ul>
+<li>Every applied write can be rebuilt from the ledger alone.</li>
+<li>A retried request is applied exactly once.</li>
+<li>Stale writes and self-approvals are refused.</li>
+<li>Tampering is detected.</li>
+<li>Rollback produces a linked compensating request.</li></ul></dd></dl></div>
+
+<div class="level"><h3>Level 4 · Governed setpoint writes</h3>
+<dl><dt>Requires</dt><dd>§7 for W2; write envelopes; the NX-61 conduit; a site hazard review before any use outside a simulator.</dd>
+<dt>Tests</dt><dd><ul>
+<li>10,000 fuzzed values around each envelope.</li>
+<li>A gateway that acknowledges a write but does not apply it.</li>
+<li>The standby lost mid-request.</li>
+<li>An independent security review of the conduit.</li></ul></dd>
+<dt>Pass</dt><dd><ul>
+<li>No value outside an envelope is applied.</li>
+<li>A read-back mismatch is compensated within the verification window every time.</li>
+<li>W2 is suspended whenever redundancy is degraded.</li>
+<li>Review findings are closed.</li></ul></dd></dl></div>
+</section>
+
+<section id="params">
+<h2><span class="n">12</span>Implementation parameters</h2>
+<p>An implementation declares these in <code>x-nexus</code>. The defaults below apply where nothing is declared.</p>
+<div class="box"><table>
+<thead><tr><th>Parameter</th><th>Default</th></tr></thead>
+<tbody>
+<tr><td>Design point per site nexus</td><td>50,000 tags; 5,000 changes/s sustained, 20,000 peak; 200 concurrent subscriptions</td></tr>
+<tr><td>Source-to-subscriber latency, p99</td><td>250 ms (P0: 100 ms)</td></tr>
+<tr><td>Staleness threshold</td><td>3 × expected update period</td></tr>
+<tr><td>Event-log window</td><td>24 h</td></tr>
+<tr><td>Store-and-forward buffer</td><td>72 h</td></tr>
+<tr><td>P0 reserved capacity</td><td>20%</td></tr>
+<tr><td>Lane weights P1 : P2 : P3</td><td>6 : 3 : 1</td></tr>
+<tr><td>Per-principal rate limit</td><td>25 requests/s sustained, burst 120</td></tr>
+<tr><td>Verification window (W2 read-back)</td><td>10 s</td></tr>
+<tr><td>Request expiry</td><td>W1 4 h; W2 15 min</td></tr>
+<tr><td>Ledger retention</td><td>7 years</td></tr>
+<tr><td>Media retention</td><td>Continuous video 14 days; clips and images 1 year; cited media as long as the ledger</td></tr>
+<tr><td>Media bandwidth cap on the uplink</td><td>40%; downscaled by default</td></tr>
+<tr><td>Signed media URL lifetime</td><td>≤ 10 min</td></tr>
+<tr><td>Read-replica scaling trigger</td><td>p99 latency over target, or CPU over 70%, for 10 min</td></tr>
+<tr><td>Shard threshold (reviewed, never automatic)</td><td>More than 50,000 tags or 20,000 changes/s sustained</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="annex">
+<h2><span class="n">13</span>Annexes</h2>
+<h3>Annex A · WriteRequest value (normative)</h3>
+<pre class="code">{
+  "target":        { "elementId": "string", "field": "string|null" },
+  "tier":          "W1 | W2",
+  "proposed":      "any",
+  "prior":         { "value": "any", "timestamp": "RFC 3339", "version": "string|null" },
+  "actor":         { "principal": "string", "onBehalfOf": "role id|null" },
+  "justification": { "decisionRef": "elementId|null",
+                     "falsification": { "metric": "string", "target": "string", "deadline": "RFC 3339" } },
+  "authority":     { "limitRef": "elementId|null",
+                     "escalation": "escalates | no_decision_right | exposure_unknown | stays_local" },
+  "reversible":    "boolean",
+  "compensation":  { "proposed": "any" },
+  "idempotencyKey":"string",
+  "status":        "requested | approved | applied | verified | rejected | expired | rolled_back",
+  "approvals":     [ { "principal": "string", "role": "string", "at": "RFC 3339" } ],
+  "applied":       { "at": "RFC 3339", "ack": "any" },
+  "verification":  { "readBack": "any", "match": "boolean", "at": "RFC 3339" }
+}</pre>
+<p><code>status</code> and <code>authority.escalation</code> are server-computed (NX-23). Approvers write only the <code>approvals</code> field.</p>
+
+<h3>Annex B · <code>x-nexus</code> in <code>GET /info</code> (normative)</h3>
+<pre class="code">"x-nexus": {
+  "profileVersion": "0.4",
+  "level": 1,
+  "writeTiers": { "W0": "enabled", "W1": "disabled", "W2": "disabled" },
+  "writableNamespaces": [ "uri", ... ],
+  "intakes": { "W1": "elementId|null", "W2": "elementId|null", "media": "elementId" },
+  "priorityClasses": { "P0": "...", "P1": "...", "P2": "...", "P3": "..." },
+  "redundancy": { "mode": "single | redundant", "state": "ok | degraded", "endpoints": [ "url", ... ] },
+  "history": { "owned": "description", "federated": [ "historian id", ... ] },
+  "media": { "maxBytes": 0, "mimeTypes": [ "..." ] },
+  "parameters": { "...": "Section 12 values in effect" },
+  "priorityByType": { "typeElementId": "P0 | P1 | P2 | P3", ... },
+  "serverSideAggregation": false
+}</pre>
+<p><code>priorityByType</code> lets an enterprise nexus replay each mirrored type in its class (NX-45).</p>
+
+<h3>Annex C · Registered relationship types</h3>
+<div class="box"><table>
+<thead><tr><th>Relationship</th><th>Reverse</th><th>Between</th></tr></thead>
+<tbody>
+<tr><td class="k">HasParent</td><td class="k">HasChildren</td><td>Hierarchy</td></tr>
+<tr><td class="k">GovernedBy</td><td class="k">Governs</td><td>A matter or WriteRequest and its authority limit</td></tr>
+<tr><td class="k">Justifies</td><td class="k">JustifiedBy</td><td>A decision record and a WriteRequest</td></tr>
+<tr><td class="k">Observes</td><td class="k">ObservedBy</td><td>An outcome observation and the decision or request it tests</td></tr>
+<tr><td class="k">Compensates</td><td class="k">CompensatedBy</td><td>A rollback request and the original</td></tr>
+<tr><td class="k">CapturedBy</td><td class="k">Captured</td><td>A MediaItem and its device</td></tr>
+<tr><td class="k">Documents</td><td class="k">DocumentedBy</td><td>A MediaItem and what it documents</td></tr>
+<tr><td class="k">DerivedFrom</td><td class="k">DerivationOf</td><td>A computed value and its inputs</td></tr>
+</tbody></table></div>
+</section>
+
+<footer>i3X Nexus Profile, draft 0.4. Offered for comment and for submission to CESMII as an i3X 1.0 profile.</footer>
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "default" });</script>
+</html>

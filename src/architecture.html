@@ -1,0 +1,55 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="common.css">
+<style>
+body { background: var(--paper); color: var(--navy); width: 1600px; height: 1000px; overflow: hidden; position: relative; }
+header { position: absolute; left: 60px; top: 40px; right: 60px; display: flex; justify-content: space-between; align-items: center; }
+h1 { font-size: 40px; font-weight: 700; }
+h1 small { display: block; font: 500 18px "IBM Plex Mono", monospace; color: #5a7385; margin-top: 6px; letter-spacing: .04em; }
+header img { width: 170px; }
+svg { position: absolute; left: 0; top: 130px; width: 1600px; height: 860px; }
+</style></head>
+<body>
+<header><h1>Reference architecture<small>One site nexus per plant · an optional enterprise tier above it</small></h1><img src="lns-ai-logo.png" alt="LNS.AI"></header>
+<svg viewBox="0 0 1600 860" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5a7385"/></marker>
+  <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#3fb37f"/></marker></defs>
+  <!-- zones -->
+  <g font-family="IBM Plex Mono" font-size="15" font-weight="600" fill="#5a7385" letter-spacing="1">
+    <rect x="40" y="40" width="330" height="560" rx="16" fill="#e9eff3" stroke="#c9d6df"/><text x="60" y="72">PLANT NETWORK · L0–L2</text>
+    <rect x="410" y="40" width="760" height="560" rx="16" fill="#e3f2f8" stroke="#038bbb" stroke-width="2"/><text x="430" y="72" fill="#038bbb">SITE NEXUS · DMZ L3.5 · TWO NODES + WITNESS</text>
+    <rect x="1210" y="40" width="350" height="560" rx="16" fill="#e9eff3" stroke="#c9d6df"/><text x="1230" y="72">SITE SYSTEMS · L3</text>
+  </g>
+  <g font-size="19" font-weight="600" fill="#142533">
+    <!-- plant sources -->
+    <g><rect x="70" y="105" width="270" height="66" rx="10" fill="#fff" stroke="#c9d6df"/><text x="205" y="145" text-anchor="middle">OPC UA servers</text></g>
+    <g><rect x="70" y="195" width="270" height="66" rx="10" fill="#fff" stroke="#c9d6df"/><text x="205" y="235" text-anchor="middle">MQTT · Sparkplug B</text></g>
+    <g><rect x="70" y="285" width="270" height="66" rx="10" fill="#fff" stroke="#c9d6df"/><text x="205" y="325" text-anchor="middle">Cameras · microphones</text></g>
+    <g><rect x="70" y="440" width="270" height="120" rx="10" fill="#fff" stroke="#d9604c" stroke-dasharray="6 5"/><text x="205" y="490" text-anchor="middle">Setpoints</text><text x="205" y="520" text-anchor="middle" font-size="15" font-weight="500" fill="#5a7385">written only after approval,</text><text x="205" y="540" text-anchor="middle" font-size="15" font-weight="500" fill="#5a7385">inside hard limits</text></g>
+    <!-- nexus internals -->
+    <g><rect x="450" y="105" width="210" height="66" rx="10" fill="#fff" stroke="#038bbb"/><text x="555" y="145" text-anchor="middle">Source drivers</text></g>
+    <g><rect x="450" y="195" width="210" height="66" rx="10" fill="#fff" stroke="#038bbb"/><text x="555" y="235" text-anchor="middle">Media gateway</text></g>
+    <g><rect x="700" y="105" width="210" height="156" rx="10" fill="#fff" stroke="#038bbb"/><text x="805" y="150" text-anchor="middle">Live cache</text><text x="805" y="178" text-anchor="middle" font-size="15" font-weight="500" fill="#5a7385">quality never faked:</text><text x="805" y="198" text-anchor="middle" font-size="15" font-weight="500" fill="#5a7385">lost = Bad, stale = Uncertain</text></g>
+    <g><rect x="950" y="105" width="190" height="156" rx="10" fill="#142533"/><text x="1045" y="170" text-anchor="middle" fill="#fff">i3X 1.0 API</text><text x="1045" y="198" text-anchor="middle" font-size="15" font-weight="500" fill="#7cc6e0">+ x-nexus</text></g>
+    <g><rect x="450" y="300" width="460" height="120" rx="10" fill="#fff" stroke="#3fb37f" stroke-width="2.5"/><text x="680" y="345" text-anchor="middle">Write governor</text><text x="680" y="375" text-anchor="middle" font-size="15" font-weight="500" fill="#5a7385">authority limits · approvals · conditional apply</text><text x="680" y="397" text-anchor="middle" font-size="15" font-weight="500" fill="#5a7385">read-back · automatic undo · hash-chained ledger</text></g>
+    <g><rect x="950" y="300" width="190" height="120" rx="10" fill="#fff" stroke="#038bbb"/><text x="1045" y="350" text-anchor="middle">Priority lanes</text><text x="1045" y="378" text-anchor="middle" font-size="15" font-weight="500" fill="#5a7385">P0 never dropped</text></g>
+    <g><rect x="450" y="460" width="690" height="110" rx="10" fill="#fff" stroke="#038bbb"/><text x="795" y="503" text-anchor="middle">Redundant store · synchronous replica · three-member quorum</text><text x="795" y="535" text-anchor="middle" font-size="15" font-weight="500" fill="#5a7385">records, ledger, subscriptions, media index survive a node or database loss</text></g>
+    <!-- site systems -->
+    <g><rect x="1240" y="105" width="290" height="66" rx="10" fill="#fff" stroke="#c9d6df"/><text x="1385" y="145" text-anchor="middle">Plant historian</text></g>
+    <g><rect x="1240" y="195" width="290" height="66" rx="10" fill="#fff" stroke="#c9d6df"/><text x="1385" y="235" text-anchor="middle">MES · CMMS</text></g>
+    <g><rect x="1240" y="300" width="290" height="120" rx="10" fill="#fff" stroke="#c9d6df"/><text x="1385" y="345" text-anchor="middle">Decision rights</text><text x="1385" y="375" text-anchor="middle" font-size="15" font-weight="500" fill="#5a7385">authority limits from the</text><text x="1385" y="395" text-anchor="middle" font-size="15" font-weight="500" fill="#5a7385">operations platform</text></g>
+  </g>
+  <!-- arrows -->
+  <g stroke="#5a7385" stroke-width="2.5" fill="none" marker-end="url(#a)">
+    <path d="M340 138 L448 138"/><path d="M340 228 L448 160"/><path d="M340 318 L448 228"/>
+    <path d="M660 138 L698 138"/><path d="M910 183 L948 183"/>
+    <path d="M1238 138 L1142 150"/><path d="M1238 228 L1142 228"/><path d="M1238 400 C 1185 445, 1000 448, 912 400" />
+  </g>
+  <path d="M450 395 C 380 420, 360 450, 342 480" stroke="#3fb37f" stroke-width="3" fill="none" marker-end="url(#g)"/>
+  <!-- clients and enterprise -->
+  <g font-size="19" font-weight="600" fill="#142533">
+    <g><rect x="410" y="660" width="380" height="120" rx="14" fill="#142533"/><text x="600" y="708" text-anchor="middle" fill="#fff">People · systems · AI agents</text><text x="600" y="738" text-anchor="middle" font-size="15" font-weight="500" fill="#7cc6e0">any i3X 1.0 client works unchanged</text></g>
+    <g><rect x="840" y="660" width="380" height="120" rx="14" fill="#fff" stroke="#c9d6df"/><text x="1030" y="708" text-anchor="middle">Enterprise nexus (optional)</text><text x="1030" y="738" text-anchor="middle" font-size="15" font-weight="500" fill="#5a7385">mirrors sites over i3X, outbound only</text></g>
+  </g>
+  <g stroke="#5a7385" stroke-width="2.5" fill="none" marker-end="url(#a)"><path d="M600 658 L 760 600"/><path d="M1030 658 L 1000 600"/></g>
+</svg>
+</body></html>

@@ -1,0 +1,37 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="common.css">
+<style>
+body { background: var(--navy); color: var(--ink); width: 1600px; height: 800px; overflow: hidden; position: relative; padding: 50px 60px; }
+header { display: flex; justify-content: space-between; align-items: center; }
+h1 { font-size: 40px; font-weight: 700; }
+h1 small { display: block; font: 500 18px "IBM Plex Mono", monospace; color: var(--blue-soft); margin-top: 6px; letter-spacing: .04em; }
+header img { width: 170px; }
+.flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 60px; }
+.step { position: relative; background: var(--navy-2); border: 2px solid var(--navy-3); padding: 26px 26px 28px 40px; clip-path: polygon(0 0, 92% 0, 100% 50%, 92% 100%, 0 100%, 8% 50%); min-height: 240px; }
+.step:first-child { clip-path: polygon(0 0, 92% 0, 100% 50%, 92% 100%, 0 100%); padding-left: 28px; }
+.step .n { font: 600 16px "IBM Plex Mono", monospace; color: var(--blue-soft); letter-spacing: .12em; }
+.step h2 { font-size: 30px; margin: 8px 0 12px; }
+.step p { font-size: 18px; line-height: 1.45; color: #c7d7e2; max-width: 300px; }
+.step.done { background: #173b2f; border-color: var(--ok); }
+.branch { margin-top: 44px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 22px; }
+.b { border: 1px solid #3f6a86; border-radius: 12px; padding: 18px 22px; }
+.b h3 { font-size: 21px; margin-bottom: 6px; }
+.b p { font-size: 17px; color: #b8cad6; line-height: 1.4; }
+.b.stop h3 { color: #f08b78; } .b.warn h3 { color: #f0c26b; } .b.ok h3 { color: #6fd3a2; }
+.foot { position: absolute; left: 60px; bottom: 30px; font: 500 16px "IBM Plex Mono", monospace; color: #6f8ea3; }
+</style></head>
+<body>
+<header><h1>How a governed change works<small>No client writes to a plant or business system directly</small></h1><img src="lns-ai-logo-white.png" alt="LNS.AI"></header>
+<div class="flow">
+  <div class="step"><div class="n">01 · REQUESTED</div><h2>Write request</h2><p>A person or an AI agent asks. It records who asked, the decision behind it, and how to undo it.</p></div>
+  <div class="step"><div class="n">02 · APPROVED</div><h2>Authority</h2><p>The site's limits decide who approves. Agents never approve, and nobody approves their own request.</p></div>
+  <div class="step"><div class="n">03 · APPLIED</div><h2>Conditional write</h2><p>Only if the target has not changed since the request. Setpoints must stay inside hard limits.</p></div>
+  <div class="step done"><div class="n">04 · VERIFIED</div><h2>Read back</h2><p>The result is read back and checked. Every step is a hash-chained record an auditor can replay.</p></div>
+</div>
+<div class="branch">
+  <div class="b stop"><h3>Rejected</h3><p>No decision right, outside the limits, or the target moved. Nothing is written.</p></div>
+  <div class="b warn"><h3>Rolled back</h3><p>The read-back did not match, so the prior value is restored automatically.</p></div>
+  <div class="b ok"><h3>Outcome checked later</h3><p>A falsification condition on the decision lets a verifier report whether the change did what it claimed.</p></div>
+</div>
+<div class="foot">i3X Nexus Profile · tiers W0 publish · W1 record · W2 setpoint</div>
+</body></html>

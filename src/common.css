@@ -1,0 +1,11 @@
+/* Shared look for the submission images: LNS.AI navy and blue, from the logo itself. */
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+:root {
+  --navy: #142533; --navy-2: #1c3344; --navy-3: #24405a;
+  --blue: #038bbb; --blue-soft: #7cc6e0; --ink: #e8f1f6; --muted: #9db3c2;
+  --paper: #f4f7f9; --rule: #d4dee5; --ok: #3fb37f; --warn: #e3a33b; --stop: #d9604c;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; }
+body { font-family: "IBM Plex Sans", "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
+.mono { font-family: "IBM Plex Mono", monospace; }
