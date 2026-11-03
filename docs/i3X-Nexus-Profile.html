@@ -111,7 +111,7 @@ footer { margin-top: 64px; font-size: 13px; color: var(--muted); border-top: 1px
 <section id="abstract">
 <h2><span class="n">1</span>Abstract</h2>
 <p class="lede">This profile defines an <strong>i3X nexus</strong>: one i3X 1.0 endpoint per site that serves live values, history, business records and media (video, images, audio) in a single address space. Writes are governed: each one is authorised, recorded, reversible and checked afterwards. The nexus is redundant, so it keeps working through the loss of a node or of the site's uplink.</p>
-<p>OPC UA, i3X and MCP already define how data moves and how models reach tools. No existing standard defines who may write, under what authority, with what record of why, how a write is undone, or how anyone checks afterwards that it did what it claimed. Software agents now act on plant data, and that makes the gap urgent. This profile fills it while staying inside the i3X 1.0 contract. A client that knows nothing about the profile keeps working.</p>
+<p>OPC UA, i3X and MCP already define how data moves and how models reach tools (Annex D shows how an agent reaches a nexus over MCP). No existing standard defines who may write, under what authority, with what record of why, how a write is undone, or how anyone checks afterwards that it did what it claimed. Software agents now act on plant data, and that makes the gap urgent. This profile fills it while staying inside the i3X 1.0 contract. A client that knows nothing about the profile keeps working.</p>
 <p>The profile is product-neutral. It is meant to let an operations or decision platform that holds authority limits, a historian, an MES or CMMS, a camera system and AI agents interoperate through one contract. Any system can implement it, as a server or as a client.</p>
 <div class="callout">
   <p><strong>Core mechanism.</strong> A nexus never writes to a plant system directly on a client's behalf. Every governed write is a <em>WriteRequest</em> object. It carries its actor, its authority and its justification, and moves through <code>requested → approved → applied → verified</code>, or ends <code>rejected</code>, <code>expired</code> or <code>rolled_back</code>. Clients read it and subscribe to it over plain i3X 1.0.</p>
@@ -141,6 +141,7 @@ footer { margin-top: 64px; font-size: 13px; color: var(--muted); border-top: 1px
 <li>ISA-95 / IEC 62264 (equipment hierarchy)</li>
 <li>Eclipse Sparkplug 3.0</li>
 <li>RFC 2119, RFC 8174, RFC 3339, RFC 9110</li>
+<li>Model Context Protocol, revision 2025-06-18 (Annex D, and the Agent Extension)</li>
 </ul>
 </section>
 
@@ -319,7 +320,8 @@ sequenceDiagram
 <li><strong>Freshness.</strong> At apply time the target still holds the recorded prior value. If it does not, the request is rejected as stale. The apply itself SHOULD be conditional on the recorded version (for example HTTP If-Match), so a change that lands between the check and the write is also refused.</li>
 <li><strong>Approval.</strong> W1 needs one approval at or below the delegated limit, and approval by the limit's owner role above it or on any boundary trigger. W2 always needs a named person. Requester and approver MUST be different principals.</li>
 </ol>
-<ul class="reqs"><li><span class="req">NX-27</span>A refusal by the system of record (a 4xx, or a conditional write refused as stale) rejects the request. A failure of the system of record (a 5xx, a timeout, no answer) MUST NOT: the approval stands, the request stays <code>approved</code>, and the governor retries. A governor that takes over MUST finish requests left <code>approved</code> or <code>applied</code> by its predecessor, re-reading the system of record first so that an apply that already happened is recorded, not repeated.</li></ul>
+<ul class="reqs"><li><span class="req">NX-27</span>A refusal by the system of record (a 4xx, or a conditional write refused as stale) rejects the request. A failure of the system of record (a 5xx, a timeout, no answer) MUST NOT: the approval stands, the request stays <code>approved</code>, and the governor retries. A governor that takes over MUST finish requests left <code>approved</code> or <code>applied</code> by its predecessor, re-reading the system of record first so that an apply that already happened is recorded, not repeated.</li>
+<li><span class="req">NX-28</span>A change to an authority limit is itself a W1 write, with the limit as its target, and MUST be approved by the role one level above the limit's owner, as NX-35. The party a limit constrains MUST NOT be able to widen it: a direct write to a limit MUST be refused, even from the owner of its namespace, and a limit that names no role above its owner MUST be changed only through site configuration. A change MUST NOT alter the limit's site or exception type.</li></ul>
 <p class="mono" style="background:none;padding:0">Escalation rule: <strong>escalates</strong> if exposure ≥ materiality threshold or any boundary trigger is present; <strong>no_decision_right</strong> if no limit exists; <strong>exposure_unknown</strong> if a limit exists but no exposure is stated; otherwise <strong>stays_local</strong>. The delegated limit decides who approves. It is not the escalation test.</p>
 
 <h3>7.5 Provenance</h3>
@@ -502,12 +504,13 @@ sequenceDiagram
 <li>A retried intake write across a failover.</li>
 <li>A stale prior value.</li>
 <li>Self-approval.</li>
+<li>A limit owner widening their own authority limit (NX-28).</li>
 <li>A ledger entry edited by hand.</li>
 <li>A rollback.</li></ul></dd>
 <dt>Pass</dt><dd><ul>
 <li>Every applied write can be rebuilt from the ledger alone.</li>
 <li>A retried request is applied exactly once.</li>
-<li>Stale writes and self-approvals are refused.</li>
+<li>Stale writes, self-approvals and self-widened limits are refused.</li>
 <li>Tampering is detected.</li>
 <li>Rollback produces a linked compensating request.</li></ul></dd></dl></div>
 
@@ -603,6 +606,18 @@ sequenceDiagram
 <tr><td class="k">Documents</td><td class="k">DocumentedBy</td><td>A MediaItem and what it documents</td></tr>
 <tr><td class="k">DerivedFrom</td><td class="k">DerivationOf</td><td>A computed value and its inputs</td></tr>
 </tbody></table></div>
+<h3>Annex D · Agents over MCP (informative)</h3>
+<p>Most AI agents reach tools through the Model Context Protocol, not i3X. A nexus that serves agents answers MCP at <code>POST /mcp</code> with the caller's own credential, and each MCP tool is carried out as the i3X request below, as that caller, through the same authentication, rate limits, priority lanes and write governor. MCP is a second front door to the same governed paths and never a way around them. The full requirements (grants, freeze, signed approvals, Level 5) are in the companion <em>i3X Nexus Agent Extension</em>, whose NXA-4 and NXA-12 make this binding.</p>
+<div class="box"><table>
+<thead><tr><th>Tier</th><th>What an agent may do</th><th>MCP tool</th><th>i3X request</th></tr></thead>
+<tbody>
+<tr><td class="k">Read</td><td>Browse, read values and raw history</td><td><code>browse</code>, <code>read_values</code>, <code>read_history</code></td><td><code>GET /objects</code>, <code>POST /objects/value</code>, <code>POST /objects/history</code></td></tr>
+<tr><td class="k">W0</td><td>Publish into a namespace it owns, for example its own conclusions (NX-21)</td><td>None; this is a plain i3X write</td><td><code>PUT /objects/value</code></td></tr>
+<tr><td class="k">W1</td><td>Request a change to a business record, which it can never approve</td><td><code>request_change</code>, then <code>check_request</code></td><td><code>PUT</code> on the W1 intake; the idempotency key makes a retry the same request</td></tr>
+<tr><td class="k">W2</td><td>Request a setpoint change inside its envelope, which a named person approves every time</td><td><code>request_setpoint</code>, then <code>check_request</code></td><td><code>PUT</code> on the W2 intake</td></tr>
+<tr><td class="k">Approve</td><td>Nothing, at any tier (NX-21)</td><td>There is no approval tool</td><td>A decision from an agent is refused with 403</td></tr>
+</tbody></table></div>
+<p>A refusal comes back as a tool result carrying the i3X status, so the agent sees the same answer an i3X client would. Values returned to an agent are plant data, and text inside them (a work-order title, an operator note) is never an instruction to the agent.</p>
 </section>
 
 <footer>i3X Nexus Profile, draft 0.4. Offered for comment and for submission to CESMII as an i3X 1.0 profile.</footer>
